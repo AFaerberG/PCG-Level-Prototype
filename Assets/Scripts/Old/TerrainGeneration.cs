@@ -35,7 +35,8 @@ public class TerrainGeneration : MonoBehaviour
             for (int x = 0; x < chunkSize; x++)
             {
                 //int yValue = Mathf.RoundToInt(Mathf.Abs(Mathf.PerlinNoise(x + generationSeed.x, z + generationSeed.y)) * 20);
-                float yValue = Mathf.PerlinNoise((generationSeed.x / seedRange) + (x / (float)chunkSize), (generationSeed.y / seedRange) + (z / (float)chunkSize)) * 10;
+                //float yValue = Mathf.PerlinNoise((generationSeed.x / seedRange) + (x / (float)chunkSize), (generationSeed.y / seedRange) + (z / (float)chunkSize)) * 10;
+                float yValue = Mathf.PerlinNoise((generationSeed.x / seedRange) + (x / (float)chunkSize) + (chunk.worldCoords.x + x), (generationSeed.y / seedRange) + (z / (float)chunkSize) + chunk.worldCoords.y + z) * 10;
                 chunk.containedBlocks[z * chunkSize + x] = new Vector3Int(chunk.worldCoords.x * chunkSize + x, (int)yValue, chunk.worldCoords.y * chunkSize + z);
             }
         }

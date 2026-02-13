@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seedRange: 255
-  chunkSize: 20
+  chunkSize: 200
   blockObject: {fileID: 734446483440093005, guid: 1c008fd9ca0fb2e4b8ae0a198ec30526, type: 3}
 --- !u!4 &915975803
 Transform:
