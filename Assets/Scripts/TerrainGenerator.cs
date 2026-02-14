@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
 {
-    Terrain terrain;
-    [SerializeField] int chunkSize = 64;
+    //TerrainData terrainData;
+    [SerializeField] Terrain baseTerrain;
+    public int chunkSize = 64;
     [SerializeField] int chunkHeight = 64;
 
     [SerializeField] float scaleX = 1.0f;
@@ -13,8 +14,9 @@ public class TerrainGenerator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        terrain = GetComponent<Terrain>();
-        GenerateHeightmap();
+        //terrainData = baseTerrain.terrainData;
+        //GenerateHeightmap();
+        //GenerateChunk();
     }
 
     // Update is called once per frame
@@ -23,11 +25,10 @@ public class TerrainGenerator : MonoBehaviour
         //GenerateHeightmap();
     }
 
-    void GenerateHeightmap()
+    void GenerateHeightmap(Vector3 worldCoords, TerrainData terrainData)
     {
-        Vector3 worldCoords = transform.position;
-        terrain.terrainData.heightmapResolution = chunkSize + 1;
-        terrain.terrainData.size = new Vector3(chunkSize, chunkHeight, chunkSize);
+        terrainData.heightmapResolution = chunkSize + 1;
+        terrainData.size = new Vector3(chunkSize, chunkHeight, chunkSize);
         float[,] heights = new float[chunkSize + 1, chunkSize + 1];
         for (int x = 0; x < chunkSize + 1; x++)
         {
@@ -36,6 +37,29 @@ public class TerrainGenerator : MonoBehaviour
                 heights[z, x] = Mathf.PerlinNoise(((x + worldCoords.x) / chunkHeight ) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ) * scaleY;
             }
         }
-        terrain.terrainData.SetHeights(0, 0, heights);
+        terrainData.SetHeights(0, 0, heights);
+    }
+
+    public void GenerateChunk(Vector3 worldPosition)
+    {
+        TerrainData newTerrainData = new TerrainData();
+        GenerateHeightmap(worldPosition, newTerrainData);
+        GameObject newTerrainObject = Terrain.CreateTerrainGameObject(newTerrainData);
+        newTerrainObject.transform.position = worldPosition;        
+        //newTerrain.SetNeighbors();
+    }
+
+    public Vector2Int WorldToChunkPos(Vector3 worldPos)
+    {
+        Vector3Int vector = Vector3Int.FloorToInt(worldPos / chunkSize);
+        Vector2Int output = new Vector2Int(vector.x, vector.z);
+        return output;
+    }
+
+    public Vector3 ChunkToWorldPos(Vector2Int chunkPos)
+    {
+        Vector3 output = new Vector3(chunkPos.x, 0, chunkPos.y);
+        output *= chunkSize;
+        return output;
     }
 }
