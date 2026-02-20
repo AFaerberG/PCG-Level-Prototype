@@ -10,6 +10,7 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] float scaleX = 1.0f;
     [SerializeField] float scaleY = 1.0f;
     [SerializeField] float scaleZ = 1.0f;
+    [SerializeField] int fractalIterations = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -17,6 +18,7 @@ public class TerrainGenerator : MonoBehaviour
         //terrainData = baseTerrain.terrainData;
         //GenerateHeightmap();
         //GenerateChunk();
+        chunkSize = Mathf.ClosestPowerOfTwo(chunkSize);
     }
 
     // Update is called once per frame
@@ -34,7 +36,8 @@ public class TerrainGenerator : MonoBehaviour
         {
             for (int z = 0; z < chunkSize + 1; z++)
             {
-                heights[z, x] = Mathf.PerlinNoise(((x + worldCoords.x) / chunkHeight ) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ) * scaleY;
+                //heights[z, x] = Mathf.PerlinNoise(((x + worldCoords.x) / chunkHeight ) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ) * scaleY;
+                heights[z, x] = FractalNoise(((x + worldCoords.x) / chunkHeight) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ, fractalIterations);
             }
         }
         terrainData.SetHeights(0, 0, heights);
@@ -61,5 +64,19 @@ public class TerrainGenerator : MonoBehaviour
         Vector3 output = new Vector3(chunkPos.x, 0, chunkPos.y);
         output *= chunkSize;
         return output;
+    }
+
+    float FractalNoise(float x, float z, int iterations)
+    {
+        float output = Mathf.PerlinNoise(x, z);
+        float amplitude = 1f;
+
+        for (int i = 1; i < iterations; i++)
+        {
+            output += ((i + 1) / Mathf.Pow(2, i)) * Mathf.PerlinNoise(Mathf.Pow(2, i) * x, Mathf.Pow(2, i) * z);
+            amplitude += (i + 1) / Mathf.Pow(2, i);
+        }
+
+        return output / amplitude * scaleY;
     }
 }

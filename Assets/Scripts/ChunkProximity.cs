@@ -4,6 +4,7 @@ public class ChunkProximity : MonoBehaviour
 {
     Vector3 prevPos;
     [SerializeField] TerrainGenerator terrainGen;
+    //[SerializeField] int renderDistance = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
