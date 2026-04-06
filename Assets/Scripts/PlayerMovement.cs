@@ -21,31 +21,34 @@ public class PlayerMovement : MonoBehaviour
         downAction = InputSystem.actions.FindAction("Sprint");
 
         rigidbody = GetComponent<Rigidbody>();
-        rigidbody.maxLinearVelocity = 10f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 moveValue = moveAction.ReadValue<Vector2>();
-
-        rigidbody.AddForce(new Vector3(moveValue.x, 0, moveValue.y));
-
-        rigidbody.linearVelocity = new Vector3(moveValue.x * 10, rigidbody.linearVelocity.y, moveValue.y * 10);
-
-        Vector2 lookValue = cameraAction.ReadValue<Vector2>();
-
-        rigidbody.rotation *= Quaternion.AngleAxis(lookValue.x, Vector3.up);
-        camera.transform.rotation *= Quaternion.AngleAxis(lookValue.y, Vector3.left);
-
         if (downAction.IsPressed())
         {
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, -10, rigidbody.linearVelocity.z);
+            rigidbody.maxLinearVelocity = 20f;
+        }
+        else
+        {
+            rigidbody.maxLinearVelocity = 10f;
         }
 
-        if (jumpAction.IsPressed())
-        {
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, 10, rigidbody.linearVelocity.z);
-        }
+        Vector2 moveValue = moveAction.ReadValue<Vector2>();
+        float jumpValue = jumpAction.ReadValue<float>();
+
+        Vector3 moveForce = new Vector3(moveValue.x, jumpValue, moveValue.y);
+
+        rigidbody.AddForce(transform.TransformDirection(moveForce));
+
+        /*Vector2 lookValue = cameraAction.ReadValue<Vector2>();
+
+        rigidbody.rotation *= Quaternion.AngleAxis(lookValue.x, Vector3.up);
+        Quaternion yRotation = Quaternion.AngleAxis(lookValue.y, Vector3.left);
+        Vector3 yRotationEuler = yRotation.eulerAngles;
+        yRotationEuler.x = Mathf.Clamp(yRotationEuler.x, -90f, 90f);
+        yRotationEuler.z = Mathf.Clamp(yRotationEuler.z, -90f, 90f);
+        camera.transform.rotation *= yRotationEuler;*/
     }
 }

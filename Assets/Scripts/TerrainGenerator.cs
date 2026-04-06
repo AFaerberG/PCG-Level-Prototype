@@ -12,6 +12,8 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] float scaleZ = 1.0f;
     [SerializeField] int fractalIterations = 1;
 
+    Vector2 randomSeed;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,6 +21,8 @@ public class TerrainGenerator : MonoBehaviour
         //GenerateHeightmap();
         //GenerateChunk();
         chunkSize = Mathf.ClosestPowerOfTwo(chunkSize);
+        randomSeed = new Vector2(Random.Range(0f, 1f), Random.Range(0f, 1f));
+        print(randomSeed);
     }
 
     // Update is called once per frame
@@ -37,7 +41,7 @@ public class TerrainGenerator : MonoBehaviour
             for (int z = 0; z < chunkSize + 1; z++)
             {
                 //heights[z, x] = Mathf.PerlinNoise(((x + worldCoords.x) / chunkHeight ) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ) * scaleY;
-                heights[z, x] = FractalNoise(((x + worldCoords.x) / chunkHeight) * scaleX, ((z + worldCoords.z) / chunkSize) * scaleZ, fractalIterations);
+                heights[z, x] = FractalNoise(((x + worldCoords.x) / chunkHeight + randomSeed.x) * scaleX, ((z + worldCoords.z) / chunkSize + randomSeed.y) * scaleZ, fractalIterations);
             }
         }
         terrainData.SetHeights(0, 0, heights);
