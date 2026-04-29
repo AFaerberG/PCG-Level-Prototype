@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
     InputAction moveAction;
     InputAction cameraAction;
     InputAction jumpAction;
-    InputAction downAction;
+    InputAction quitAction;
 
     [SerializeField] GameObject camera;
 
@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         cameraAction = InputSystem.actions.FindAction("Look");
         jumpAction = InputSystem.actions.FindAction("Jump");
-        downAction = InputSystem.actions.FindAction("Sprint");
+        quitAction = InputSystem.actions.FindAction("Sprint");
 
         rigidbody = GetComponent<Rigidbody>();
     }
@@ -26,9 +26,9 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (downAction.IsPressed())
+        if (quitAction.IsPressed())
         {
-            rigidbody.maxLinearVelocity = 20f;
+            Application.Quit();
         }
         else
         {

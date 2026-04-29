@@ -7,6 +7,8 @@ public class TerrainGenerator : MonoBehaviour
     public int chunkSize = 64;
     [SerializeField] int chunkHeight = 64;
 
+    [SerializeField] Material material;
+
     [SerializeField] float scaleX = 1.0f;
     [SerializeField] float scaleY = 1.0f;
     [SerializeField] float scaleZ = 1.0f;
@@ -31,6 +33,7 @@ public class TerrainGenerator : MonoBehaviour
         //GenerateHeightmap();
     }
 
+    // Based off tutorial: https://www.youtube.com/watch?v=vFvwyu_ZKfU
     void GenerateHeightmap(Vector3 worldCoords, TerrainData terrainData)
     {
         terrainData.heightmapResolution = chunkSize + 1;
@@ -52,7 +55,8 @@ public class TerrainGenerator : MonoBehaviour
         TerrainData newTerrainData = new TerrainData();
         GenerateHeightmap(worldPosition, newTerrainData);
         GameObject newTerrainObject = Terrain.CreateTerrainGameObject(newTerrainData);
-        newTerrainObject.transform.position = worldPosition;        
+        newTerrainObject.transform.position = worldPosition;
+        newTerrainObject.GetComponent<Terrain>().materialTemplate = material;
         //newTerrain.SetNeighbors();
     }
 
@@ -70,6 +74,7 @@ public class TerrainGenerator : MonoBehaviour
         return output;
     }
 
+    // Based off tutorial: https://www.youtube.com/watch?v=vFvwyu_ZKfU
     float FractalNoise(float x, float z, int iterations)
     {
         float output = Mathf.PerlinNoise(x, z);
